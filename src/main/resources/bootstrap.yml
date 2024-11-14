@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: ${project.artifactId}
+  cloud:
+    nacos:
+      config:
+        enabled: false
+        namespace: ${nacos.namespace}
+        server-addr: ${nacos.server.address}
+        username: ${nacos.username}
+        password: ${nacos.password}
+        shared-configs:
+          - dataId: ${project.artifactId}.yml
+            refresh: true
+          - dataId: ${project.parent.artifactId}-clickhouse.yml
+            refresh: true
+          - dataId: ${project.parent.artifactId}-redis.yml
+            refresh: true
+          - data-id: ${project.parent.artifactId}-mqtt.yml
+            refresh: true
+          - data-id: ${project.parent.artifactId}-general.yml
+            refresh: true
+          - data-id: ${project.parent.artifactId}-redisson.yml
+            refresh: true
+      discovery:
+        enabled: true
+        namespace: ${nacos.namespace}
+        server-addr: ${nacos.server.address}
+        username: ${nacos.username}
+        password: ${nacos.password}

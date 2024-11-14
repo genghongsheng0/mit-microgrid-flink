@@ -1,0 +1,163 @@
+spring:
+  devtools:
+    restart:
+      # 热部署开关
+      enabled: true
+  datasource:
+    druid:
+      stat-view-servlet:
+        enabled: true
+        loginUsername: admin
+        loginPassword: 123456
+    dynamic:
+      druid:
+        initial-size: 5
+        min-idle: 5
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
+        useGlobalDataSourceStat: true
+        filters: stat,slf4j
+        connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
+      datasource:
+        # 主库数据源
+        master:
+          driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
+          url: jdbc:clickhouse://${CLICKHOUSE_SERVER:localhost}:${CLICKHOUSE_PORT:8123}/mit_microgrid_history
+          username: ${CLICKHOUSE_USERNAME:default}
+          password: ${CLICKHOUSE_PASSWORD:123456}
+  autoconfigure:
+    exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+  redis:
+    host: ${REDIS_SERVER:localhost}
+    port: ${REDIS_PORT:6379}
+    database: ${REDIS_DB:2}
+    password: ${REDIS_PASSWORD:123456}
+    timeout: 10s
+    lettuce:
+      pool:
+        min-idle: 0
+        max-idle: 8
+        max-active: 8
+        max-wait: -1ms
+  ## MQTT##
+  mqtt:
+    client:
+      enabled: false
+      serverUrl: tcp://${MQTT_SERVER:localhost}:${MQTT_PORT:1883}
+      username: ${MQTT_USERNAME:admin}
+      password: ${MQTT_PASSWORD:admin}
+      client-id: ${project.artifactId}-${random.uuid}
+      connection-timeout: 10
+      keepalive-interval: 20
+      max-inflight: 1000
+      automatic-reconnect: true
+      cleanSession: true
+      default-qos: 0
+      default-retained: true
+      default-topic: topic
+      completion-timeout: 30000
+      consumer-topics:
+        - topic: data/#
+      enable-consumer: true
+
+redisson-config:
+  mode: ${REDIS_MODE:single}
+  singleAddress: redis://${REDIS_SERVER:localhost}:${REDIS_PORT:6379}
+  singleDatabase: ${REDIS_DB:2}
+  singlePassword: ${REDIS_PASSWORD:123456}
+  connectionPoolSize: 64
+  subscriptionConnectionMinimumIdleSize: 1
+  subscriptionConnectionPoolSize: 50
+  connectionMinimumIdleSize: 32
+
+thread-pool:
+  core-pool-size: 50
+  maxi-mum-pool-size: 100
+  keep-alive-time: 60
+  queue-capacity: 1000
+# feign 配置
+feign:
+  okhttp:
+    enabled: true
+  httpclient:
+    enabled: false
+  client:
+    config:
+      default:
+        connectTimeout: 10000
+        readTimeout: 10000
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+
+logging:
+  level:
+    com.mit.microgrid: debug
+    org.springframework: info
+logs:
+  path: ./logs
+
+# swagger配置
+swagger:
+  enabled: true
+  title: 历史服务接口文档
+  license: Powered By Mit
+
+powerStationStatistics:
+  chart:
+    hourPowerGen: # 有功功率
+      table: rpt_sps_hour
+      field: act_pow_gen
+    hourEleGen: # 实时发电量
+      table: rpt_sps_hour
+      field: act_ele_gen
+    dailyEleGen: # 日发电量
+      table: rpt_sps_day
+      field: act_ele_gen
+    monthlyEleGen: # 月发电量
+      table: rpt_sps_month
+      field: act_ele_gen
+    annualEleGen: # 年发电量
+      table: rpt_sps_year
+      field: act_ele_gen
+  box:
+    - name: 1#升压单元
+      hourPowerGen: # 当前功率
+        table: rpt_sps_hour
+        field: act_pow_gen_box01
+      dailyEleGen: # 日发电量
+        table: rpt_sps_day
+        field: act_ele_gen_box01
+      monthlyEleGen: # 月发电量
+        table: rpt_sps_month
+        field: act_ele_gen_box01
+    - name: 2#升压单元
+      hourPowerGen: # 当前功率
+        table: rpt_sps_hour
+        field: act_pow_gen_box02
+      dailyEleGen: # 日发电量
+        table: rpt_sps_day
+        field: act_ele_gen_box02
+      monthlyEleGen: # 月发电量
+        table: rpt_sps_month
+        field: act_ele_gen_box02
+    - name: 3#升压单元
+      hourPowerGen: # 当前功率
+        table: rpt_sps_hour
+        field: act_pow_gen_box03
+      dailyEleGen: # 日发电量
+        table: rpt_sps_day
+        field: act_ele_gen_box03
+      monthlyEleGen: # 月发电量
+        table: rpt_sps_month
+        field: act_ele_gen_box03

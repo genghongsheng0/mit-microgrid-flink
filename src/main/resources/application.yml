@@ -1,0 +1,33 @@
+server:
+  port: 8858
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: mit-microgrid-flink
+  profiles:
+    active: ${profile.active}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+mybatis:
+  typeAliasesPackage: com.mit.microgrid.**.domain
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+  configuration:
+    cacheEnabled: true
+    useGeneratedKeys: true
+    logImpl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    mapUnderscoreToCamelCase: true
+
+# 暴露监控端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
